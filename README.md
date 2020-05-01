@@ -1,4 +1,4 @@
-![SQS Mega](https://github.com/felipead/sqs-mega/raw/master/src/resources/logo/sqs-mega_blue_small.png)
+![SQS Mega](https://github.com/felipead/sqs-mega/raw/master/resources/logo/sqs-mega_blue_small.png)
 
 ---
 
