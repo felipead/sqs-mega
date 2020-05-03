@@ -188,3 +188,20 @@ Please keep in mind that most NoSQL systems favor _Availability_ over _Consisten
 Some systems support some limited locking capabilities. For example, Redis implements the [`SETNX`](https://redis.io/commands/setnx#design-pattern-locking-with-codesetnxcode) command that could work as a pessimist lock. However, some race conditions can occur when replicating the master node.
 
 An alternative is using what is called a **distributed lock**. Redis is a system where it is possible to create such a distributed lock using the controversial [Redlock algorithm](https://redis.io/topics/distlock), which has many different implementations. If you're interested in this topic, the [_"how to do distributed locking"_](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html) article from Martin Kleppmann is very informative.
+
+### Retry transient failures
+
+A transient failure is a temporary error that is likely to disappear soon. It is usually safe for a process to ignore a transient error and retry the failed operation later. Examples include:
+
+- TCP timeouts or connection errors
+- Server errors resulting in some HTTP status codes, such as:
+    - `502 Bad Gateway`
+    - `503 Service Unavailable`
+    - `504 Gateway Timeout`
+- Database session errors
+
+Failure to acquire pessimist database locks can also be considered transient errors. As long as the application logic is idempotent, it should be safe to retry later.
+
+Correctly handling transient errors can significantly increase the resiliency of distributed systems. The first [fallacy of distributed computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing) is _"the network is reliable"_.
+
+Luckily, when processing asynchronous messages, retrying transient errors comes almost for free. By leaving the message in the queue, we can ensure it will be processed again soon.
