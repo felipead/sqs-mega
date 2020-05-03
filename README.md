@@ -185,7 +185,7 @@ If your application uses a non-relational (NoSQL) data store, you must check the
 
 Please keep in mind that most NoSQL systems favor _Availability_ over _Consistency_ from the [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem). Some systems can only offer [eventual consistency](https://en.wikipedia.org/wiki/Eventual_consistency), and conflicts are usually solved later, at a reconciliation phase. Some strategies exist, such as _"last writer wins"_ or _"first writer wins"_. The most appropriate approach to reconciliation depends on the application.
 
-Some systems support some limited locking capabilities. For example, Redis implements the [`SETNX`](https://redis.io/commands/setnx#design-pattern-locking-with-codesetnxcode) command that could work as a pessimist lock. However, some race conditions can occur when replicating the master node.
+Some systems support limited locking capabilities. For example, Redis implements the [`SETNX`](https://redis.io/commands/setnx#design-pattern-locking-with-codesetnxcode) command that could work as a pessimist lock. However, race conditions can occur when replicating the master node.
 
 An alternative is using what is called a **distributed lock**. Redis is a system where it is possible to create such a distributed lock using the controversial [Redlock algorithm](https://redis.io/topics/distlock), which has many different implementations. If you're interested in this topic, the [_"how to do distributed locking"_](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html) article from Martin Kleppmann is very informative.
 
