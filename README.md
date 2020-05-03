@@ -154,21 +154,37 @@ This last statement will either create a duplicate user, or fail if there are un
 
 #### Isolation and locking strategies for relational databases
 
-Relational databases have different strategies for dealing with concurrency, such as transaction isolation or locks. It is a broad topic that is out of the scope of this document, however here are a few pointers.
+Relational databases have different strategies for dealing with concurrency, such as [transaction isolation](https://en.wikipedia.org/wiki/Isolation_(database_systems)) or locks. Of the four [ACID](https://en.wikipedia.org/wiki/ACID) properties in a relational database, the _Isolation_ property is the one most often relaxed. Databases offer some [transaction isolation levels](https://en.wikipedia.org/wiki/Isolation_(database_systems)#Isolation_levels), which control the degree of locking that occurs when selecting data: _serializable_, _repeatable reads_, _read committed_ and _read uncommitted_. Developers need to understand the tradeoffs and assurances offered by each isolation level, and chose appropriately according to the application needs.
 
-PostgreSQL:
+It is also possible to use pessimist locks that are defined explicitly by the application and bound to the session or transaction, such as PostgreSQL's _advisory locks_ or MySQL _user-level locks_. A process fails to acquire the lock if another process is holding it. Because these locks are ultimately bound to the current session, if the process suddenly dies, the connection is terminated, and the lock automatically released.
+
+Application-level locks can be interesting for processing messages asynchronously because if a process fails to acquire a lock, it can leave the message in the queue, retrying processing at a later time. Another benefit of such locks is that they make it more straightforward for developers to reason about concurrency while relieving the burden from the database from implicitly managing transaction isolation. It is up to the application developer, though, to ensure locks are created and used correctly without causing race conditions or deadlocks.
+
+It is a broad topic that is out of the scope of this document, however here are a few pointers.
+
+##### PostgreSQL
 
 - [Transaction isolation levels](https://www.postgresql.org/docs/current/transaction-iso.html)
 - [Advisory locks](https://www.postgresql.org/docs/current/explicit-locking.html)
 
-MySQL:
+##### MySQL
 
 - [Transaction isolation levels](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html)
 - [Locking reads](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking-reads.html)
 - [User-level locks](https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html)
 
-MariaDB:
+##### MariaDB
 
 - [Transaction isolation levels](https://mariadb.com/kb/en/set-transaction/#isolation-level)
 - Select with [`LOCK IN SHARE MODE`](https://mariadb.com/kb/en/lock-in-share-mode/) or [`FOR UPDATE`](https://mariadb.com/kb/en/for-update/)
 - [User-level locks](https://mariadb.com/kb/en/get_lock/)
+
+#### When a relational database is not available
+
+If your application uses a non-relational (NoSQL) data store, you must check the available mechanisms for dealing with concurrency or solving conflicts.
+
+Please keep in mind that most NoSQL systems favor _Availability_ over _Consistency_ from the [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem). Some systems can only offer [eventual consistency](https://en.wikipedia.org/wiki/Eventual_consistency), and conflicts are usually solved later, at a reconciliation phase. Some strategies exist, such as _"last writer wins"_ or _"first writer wins"_. The most appropriate approach to reconciliation depends on the application.
+
+Some systems support some limited locking capabilities. For example, Redis implements the [`SETNX`](https://redis.io/commands/setnx#design-pattern-locking-with-codesetnxcode) command that could work as a pessimist lock. However, some race conditions can occur when replicating the master node.
+
+An alternative is using what is called a **distributed lock**. Redis is a system where it is possible to create such a distributed lock using the controversial [Redlock algorithm](https://redis.io/topics/distlock), which has many different implementations. If you're interested in this topic, the [_"how to do distributed locking"_](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html) article from Martin Kleppmann is very informative.
