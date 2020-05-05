@@ -98,16 +98,18 @@ Your application should threat messages as they are: notifications that an event
 
 For example, suppose your e-commerce system is listening to messages about events that happened on the user's shopping cart:
 
-1. Bob added 2 units of item A
-2. Bob added 3 units of item B
-3. Bob removed 1 unit of item A
-4. Bob added one unit of item C
-5. Alice added 10 units of item A
-6. Bob removed all units of item B
-7. Bob added 3 more units of item A
-8. Alice added 1 unit of item D
-9. Bob successfully submitted the order
-10. Alice closed the browser and never completed the order
+```
+[Bob] added 2 units of item A
+[Bob] added 3 units of item B
+[Bob] removed 1 unit of item A
+[Bob] added one unit of item C
+[Alice] added 10 units of item A
+[Bob] removed all units of item B
+[Bob] added 3 more units of item A
+[Alice] added 1 unit of item D
+[Bob] successfully submitted the order
+[Alice] closed the browser and never completed the order
+```
 
 When put in a queue, these events might arrive out of order. You should not rely on these messages for counting the items a customer added to the shopping cart or doing other computations. Addition and subtraction are commutative operations, so if you are only interested in them, the order should not matter. However, the operation of submitting the order is not commutative.
 
