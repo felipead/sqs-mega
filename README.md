@@ -13,20 +13,15 @@ SQS Mega is a minimal framework for robust messaging and async task processing b
 
 It is ideal for event-driven **microservices** or other **distributed systems** that need to exchange data or process background tasks using the [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) or _Producer-Consumer_ patterns. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to send or process messages using your platform of choice.
 
-Although it is minimal and straightforward, it can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as Celery, ActiveMQ, Sidekiq, Resque, delayed_job or even RabbitMQ or Apache Kafka. Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds and making other tools unnecessary.
+Although it is minimal and straightforward, it can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as [Celery](http://www.celeryproject.org), [ActiveMQ](https://activemq.apache.org), [Sidekiq](https://sidekiq.org), [Resque](http://resque.github.io), [delayed_job](https://github.com/collectiveidea/delayed_job/), or even [RabbitMQ](https://www.rabbitmq.com) and [Apache Kafka](https://kafka.apache.org). Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds and making other tools unnecessary.
 
-### Supported platforms
-
-- Python 3
-
-The following platforms are planned:
-
-- Rust
-- Ruby
-- Node.js
-- JVM
+It is shipping soon for Python, Rust, Ruby, Node.js and the JVM.
 
 ## Background
+
+<p align="center">
+    <img alt="Producer-Consumer Pattern" src="./resources/diagrams/publish-subscribe-pattern-diagram.png">
+</p>
 
 Different software processes typically communicate over packet networks, such as the Internet. For this communication to happen reliably, many protocols exist, but usually, they empower TCP or HTTP. A process that initiates the conversation (the _client_) sends a packet or request to another process (the _server_). The client expects an acknowledgment ("ACK") or response to be sent back on time. Otherwise, a **timeout** might happen.
 
@@ -39,10 +34,6 @@ Asynchronous communication is a powerful technique that can allow distributed-sy
 Another feature of asynchronous communication is to allow scheduling of intensive computations to be executed in the background by other processes. We typically call this scheduling a task or job. The processes that create tasks are known as _producers_; by analogy, the _consumers_ are processes that execute tasks asynchronously. This pattern is also known as _Producer-Consumer_.
 
 For asynchronous communication to happen, usually, a **message queue** is empowered. Messages can represent anything, such as an event or task. A producer puts a message in the queue. On the other side, one or more consumers read the queue and perform computing accordingly. When computing finishes, the message is deleted. If the message remains in the queue, it will be read and processed again later, possibly by another process.
-
-<p align="center">
-    <img alt="Producer-Consumer Pattern" src="./resources/diagrams/publish-subscribe-pattern-diagram.png">
-</p>
 
 There are many available systems that can be used as a message queue. When these systems are distributed and [partition-tolerant](https://en.wikipedia.org/wiki/CAP_theorem), we call them _distributed queue_. Examples include [Redis](https://redis.io), [RabbitMQ](https://www.rabbitmq.com), [ZeroMQ](https://zeromq.org), [Apache Kafka](https://kafka.apache.org) and [Amazon SQS](https://aws.amazon.com/sqs). Here we are going to discuss the later.
 
