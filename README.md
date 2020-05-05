@@ -1,10 +1,10 @@
 <p align="center">
-    <img alt="SQS Mega" width=512 src="https://github.com/felipead/sqs-mega/raw/master/resources/logo/sqs-mega_blue_large.png">
+    <img alt="SQS MEGA" width=512 src="https://github.com/sqs-mega/sqs-mega/raw/master/resources/logo/sqs-mega_logo_large.png">
 </p>
 
 ---
 
-SQS Mega is a minimal framework for robust messaging and async task processing based on [Amazon Simple Queue Service (SQS)](https://aws.amazon.com/sqs/). It has the following goals:
+SQS MEGA is a minimal framework for robust messaging and async task processing based on [Amazon Simple Queue Service (SQS)](https://aws.amazon.com/sqs/). It has the following goals:
 
 - Simplicity
 - Resiliency
@@ -56,7 +56,7 @@ Standard queue:
 - _Best-Effort Ordering_: Occasionally, messages might be delivered in an order different from which they were sent.
 
 <p align="center">
-    <img alt="Standard Queue Diagram" src="https://github.com/felipead/sqs-mega/raw/master/resources/diagrams/sqs-what-is-sqs-standard-queue-diagram.png">
+    <img alt="Standard Queue Diagram" src="https://github.com/sqs-mega/sqs-mega/raw/master/resources/diagrams/sqs-what-is-sqs-standard-queue-diagram.png">
 </p>
 
 FIFO queue:
@@ -66,7 +66,7 @@ FIFO queue:
 - _First-In-First-Out Delivery_: The order in which messages are sent and received is strictly preserved.
 
 <p align="center">
-    <img alt="FIFO Queue Diagram" src="https://github.com/felipead/sqs-mega/raw/master/resources/diagrams/sqs-what-is-sqs-fifo-queue-diagram.png">
+    <img alt="FIFO Queue Diagram" src="https://github.com/sqs-mega/sqs-mega/raw/master/resources/diagrams/sqs-what-is-sqs-fifo-queue-diagram.png">
 </p>
 
 FIFO queues are more expensive to scale. For this reason, chose Standard queues unless your application explicitly requires exactly-once processing and preserving the order of messages. Most applications can live well without such requirements.
