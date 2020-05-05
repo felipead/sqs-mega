@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="SQS MEGA" width=512 src="https://github.com/sqs-mega/sqs-mega/raw/master/resources/logo/sqs-mega_logo_large.png">
+    <img alt="SQS MEGA" src="https://github.com/sqs-mega/sqs-mega/raw/master/resources/logo/sqs-mega_logo_large.png">
 </p>
 
 ---
