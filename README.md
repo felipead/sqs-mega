@@ -13,7 +13,7 @@ SQS Mega is a minimal framework for robust messaging and async task processing b
 
 It is ideal for event-driven **microservices** or other **distributed systems** that need to exchange data or process background tasks using the Producer-Consumer pattern. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to send or process messages using your platform of choice.
 
-Although it is minimal and straightforward, it can replace intricated setups or heavy tools that could be difficult to learn, configure or scale, such as Celery, RabbitMQ, ActiveMQ, Sidekiq, Resque, delayed_job or even Kafta. Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds and making other tools unnecessary.
+Although it is minimal and straightforward, it can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as Celery, ActiveMQ, Sidekiq, Resque, delayed_job or even RabbitMQ or Apache Kafka. Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds and making other tools unnecessary.
 
 ### Supported platforms
 
@@ -26,11 +26,33 @@ The following platforms are planned:
 - Node.js
 - JVM
 
+## Background
+
+Different software processes typically communicate over packet networks, such as the Internet. For this communication to happen reliably, many protocols exist, but usually, they empower TCP or HTTP. A process that initiates the conversation (the _client_) sends a packet or request to another process (the _server_). The client expects an acknowledgment ("ACK") or response to be sent back on time. Otherwise, a **timeout** might happen.
+
+The Internet is an unreliable packet network that binds together many networks of several kinds. When two hosts try to communicate, packets may get lost or fail to be delivered. Timeouts are the only mechanism that can determine when this happens and are an essential feature of the Internet. TCP automatically resends packets that take too long to be acknowledged, but after some time it gives up. Clients using the HTTP protocol, which runs over TCP, also expect the server to send a response within a specific time frame. If this response is not received, an application error occurs.
+
+Therefore, any software process that serves requests must respond to its clients promptly, to the risk of raising timeouts. Heavy processing that might take a long time to complete must not be executed as part of the request. Instead, intensive computing tasks should be scheduled to be processed later, without requiring clients to wait. When processing finishes, it may notify the client. We call this **asynchronous** communication or processing.
+
+Asynchronous communication is a powerful technique that can allow distributed-systems such as service-oriented architectures or microservices to be fault-tolerant and scale well. Under this paradigm, services communicate using **events**. A service _publishes_ an event to signal that something relevant happened; other services _subscribe_ to these events and react to them accordingly. This method is known as **event streaming** or [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) pattern. One benefit is that it decouples services that produce events from services that consume events, allowing for horizontal scalability. Since communication happens asynchronously, it is also more flexible and tolerant of transient errors such as network timeouts.
+
+Another feature of asynchronous communication is to allow scheduling of intensive computations to be executed in the background by other processes. We typically call this scheduling a task or job. The processes that create tasks are known as _producers_; by analogy, the _consumers_ are processes that execute tasks asynchronously. This pattern is also known as **Producer-Consumer**.
+
+For asynchronous communication to happen, usually, a **message queue** is empowered. Messages can represent anything, such as an event or task. A producer puts a message in the queue. On the other side, one or more consumers read the queue and perform computing accordingly. When computing finishes, the message is deleted. If the message remains in the queue, it will be read and processed again later, possibly by another process.
+
+<p align="center">
+    <img alt="Producer-Consumer Pattern" src="./resources/diagrams/publish-subscribe-pattern-diagram.png">
+</p>
+
+There are many available systems that can be used as a message queue. When these systems are distributed and [partition-tolerant](https://en.wikipedia.org/wiki/CAP_theorem), we call them _distributed queue_. Examples include [Redis](https://redis.io), [RabbitMQ](https://www.rabbitmq.com), [ZeroMQ](https://zeromq.org), [Apache Kafka](https://kafka.apache.org) and [Amazon SQS](https://aws.amazon.com/sqs). Here we are going to discuss the later.
+
 ## Amazon SQS
 
-Amazon Simple Queue Service (SQS) is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications. SQS eliminates the complexity and overhead associated with managing and operating message oriented middleware, and empowers developers to focus on differentiating work. Using SQS, you can send, store, and receive messages between software components at any volume, without losing messages or requiring other services to be available.
+I find Amazon's [own definition](https://aws.amazon.com/sqs/) of SQS quite useful:
 
-SQS offers two types of message queues. Standard queues offer maximum throughput, best-effort ordering, and at-least-once delivery. SQS FIFO queues are designed to guarantee that messages are processed exactly once, in the exact order that they are sent.
+> Amazon Simple Queue Service (SQS) is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications. SQS eliminates the complexity and overhead associated with managing and operating message oriented middleware, and empowers developers to focus on differentiating work. Using SQS, you can send, store, and receive messages between software components at any volume, without losing messages or requiring other services to be available.
+>
+> SQS offers two types of message queues. **Standard queues** offer maximum throughput, best-effort ordering, and at-least-once delivery. SQS **FIFO queues** are designed to guarantee that messages are processed exactly once, in the exact order that they are sent.
 
 Please read the [Amazon SQS Developer Guide](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) to get started.
 
