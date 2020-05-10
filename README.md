@@ -73,6 +73,80 @@ FIFO queues are more expensive to scale. For this reason, chose Standard queues 
 
 Design your application to be idempotent and have a source of truth that it can query synchronously. This way, even if you receive duplicate or out-of-order messages, the outcome remains the same.
 
+### Anatomy of a SQS message
+
+SQS Messages have the following structure:
+
+- _Message ID_: globally unique identifier of the message
+- _Receipt handle_: identifies the act of receiving a message. This is needed when deleting the message, in order to prevent that clients attempt to delete messages they didn't receive.
+- _Body_: this is the actual message payload, can be anything and use any format.
+- _MD5 of the body_: a MD5 computation of the message body, used to ensure the integrity of the message.
+
+Example:
+
+```xml
+<Message>
+    <MessageId>27062346-9c9a-435e-abc6-d991d13d5c90</MessageId>
+    <ReceiptHandle>AQEBF2SjK3ztAC/9ANq/N6rVn9qGwl7BVbTkCqoni+LRjWe5wdbCOgGdKPgvYWFmUNuGRgwDIqfuY1o2fVGbDMwRPzMg2RHgjX6C5aiWSaaXefcGGRZaUtYEFLS4fWlMlyG1OWSxGoyR6Z+3bN/oSF+xTAOb25CojlDs7ZyYbfTqKXhYv/j8HloyVBpGN2bDAjI3TiFTtwcmDqHcBxge/YmOTCvFEFB8KMv3VT4JbnQXQYyi3FBCAEYgr/ddF+ZbbaRN7rjL6NWOfTUNFY7PocFG7BpIpfmFbdNH/LnlnOSY8S7tzLy+J6u++MCQLBuX99F3fRsEyB9bL8CEnPs4mRvCF4umNbonMgiXewsdZZQuI6vXvh6dOeJBalRCOoAQkrM1EtkS2UJuKUKpZ9VtlEBSQQ==</ReceiptHandle>
+    <MD5OfBody>5b54d0d0dc65417f2aa0aae59b07492f</MD5OfBody>
+    <Body>this is a message body</Body>
+</Message>
+```
+
+Amazon SQS API uses XML as a data format to serialize the message attributes. However, the `Body` attribute can contain any string. We can use it to send data serialized in JSON format, as long as it is properly escaped.
+
+So for example, if we want to send the following [JSON](https://www.json.org/json-en.html) payload:
+
+```json
+{
+    "id": 543210,
+    "name": "John Doe",
+    "ssn": "453142161",
+    "date_of_birth": "1986-12-01"
+}
+```
+
+It will be serialized within the SQS message envelope as:
+
+```xml
+<Body>{&quot;id&quot;: 543210, &quot;name&quot;: &quot;John Doe&quot;, &quot;ssn&quot;: &quot;453142161&quot;, &quot;date_of_birth&quot;: &quot;1986-12-01&quot;}</Body>
+```
+
+## The SQS MEGA protocol
+
+SQS MEGA requires all SQS messages to contain a valid, properly-escaped, JSON payload within the body envelope. In case the body cannot be correctly deserialized by a JSON parser, the message will be ignored or optionally sent to a dead-queue.
+
+In order to better support the event-streaming capabilities provided by the framework, the following structure should be followed when publishing events:
+
+- `protocol` (_required_, string): should contain the `sqs-mega` string. This is important to differentiate SQS MEGA events from other SQS messages that may arrive at the queue. Messages that do not adhere to the protocol will either be ignored or handled differently.
+- `version` (_required_, integer): specifies the version of the protocol. Here we consciously avoid the unnecessary complexities of [semantic versioning](https://semver.org). The current version is 1, and this number will only increase if backward incompatible changes are introduced.
+- `event.name` (_required_, string): the name of the event, which will be used for subscribers to match. Can be any lower-cased alphanumeric string and can include the following special characters: `.`, `-`, `_`.
+- `event.timestamp` (_required_, datetime): a [ISO-9601](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations) timestamp that indicates when the event happened.
+- `event.version` (_optional_, integer): this is the version of the event. It is highly recommended that your events are versioned, to allow breaking changes to be introduced more easily in the future. However, we also want to avoid the complexities of semantic versioning and only increase the version when backward incompatible changes are needed. Design your event subscribers to be [tolerant readers](https://martinfowler.com/bliki/TolerantReader.html). This will allow your architecture to evolve more easily.
+- `event.publisher` (_optional_, string): any string that can identify the publisher of the event, like the name of a service,  system or domain.
+- `event.subject` (_optional_, string): the subject to which the event refers to. It is usually an entity identifier, like the database primary key. For example, if the event is about an item being added to the user's shopping cart in an e-commerce system, the subject could be the user ID.
+- `data` (_optional_): a JSON object containing any application-specific data.
+
+Example:
+
+```json
+{
+    "protocol": "sqs-mega",
+    "version": 1,
+    "event": {
+        "name": "shopping_cart.item_added",
+        "timestamp": "2020-05-04T15:53:23.123",
+        "version": 1,
+        "publisher": "shopping-cart-service",
+        "subject": "987650"
+    },
+    "data": {
+        "item_id": "61fcc874-624e-40f8-8fd7-0e663c7837e8",
+        "item_quantity": 5
+    }
+}
+```
+
 ## Best practices for processing asynchronous messages
 
 ### Design your application to be idempotent
