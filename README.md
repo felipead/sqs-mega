@@ -15,7 +15,15 @@ It is ideal for event-driven **microservices** or other **distributed systems** 
 
 Although it is minimal and straightforward, it can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as [Celery](http://www.celeryproject.org), [ActiveMQ](https://activemq.apache.org), [Sidekiq](https://sidekiq.org), [Resque](http://resque.github.io), [delayed_job](https://github.com/collectiveidea/delayed_job/), or even [RabbitMQ](https://www.rabbitmq.com) and [Apache Kafka](https://kafka.apache.org). Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds and making other tools unnecessary.
 
-It is shipping soon for Python, Rust, Ruby, Node.js and the JVM.
+## Implementations
+
+It is shipping soon for:
+
+- [Python](https://github.com/mega-distributed/sqs-mega-python)
+- Node.js
+- Rust
+- Ruby
+- JVM
 
 ## Background
 
