@@ -4,22 +4,24 @@
 
 ---
 
-SQS MEGA is a minimal framework for robust messaging and async task processing based on [Amazon Simple Queue Service (SQS)](https://aws.amazon.com/sqs/). It has the following goals:
+SQS MEGA is a minimal and resilient framework for async processing, event-streaming and pattern-matching that uses [Amazon Simple Queue Service (SQS)](https://aws.amazon.com/sqs/). It also implements the [MEGA event protocol](https://github.com/mega-distributed/event-mega). It has the following goals:
 
 - Simplicity
 - Resiliency
 - Horizontal scalability
 - Interoperability
 
-It is ideal for event-driven **microservices** or other **distributed systems** that need to exchange data or process background tasks using the [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) or _Producer-Consumer_ patterns. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to send or process messages using your platform of choice.
+It is ideal for event-driven **microservices** or **distributed systems** that need to communicate using the [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) pattern or process background tasks. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to publish and subscribe to events or consume messages in the background using your platform of choice.
 
-Although it is minimal and straightforward, it can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as [Celery](http://www.celeryproject.org), [ActiveMQ](https://activemq.apache.org), [Sidekiq](https://sidekiq.org), [Resque](http://resque.github.io), [delayed_job](https://github.com/collectiveidea/delayed_job/), or even [RabbitMQ](https://www.rabbitmq.com) and [Apache Kafka](https://kafka.apache.org). Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds and making other tools unnecessary.
+SQS MEGA implementations also have an idiomatic and expressive **pattern-matching** DSL that allows developers to subscribe to specific events or match messages easily.
+
+The framework can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as [Celery](http://www.celeryproject.org), [ActiveMQ](https://activemq.apache.org), [Sidekiq](https://sidekiq.org), [Resque](http://resque.github.io), [delayed_job](https://github.com/collectiveidea/delayed_job/), or even [RabbitMQ](https://www.rabbitmq.com) and [Apache Kafka](https://kafka.apache.org). Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds.
 
 ## Implementations
 
 It is shipping soon for:
 
-- [Python](https://github.com/mega-distributed/sqs-mega-python)
+- → **[Python](https://github.com/mega-distributed/sqs-mega-python)**
 - Node.js
 - Rust
 - Ruby
