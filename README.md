@@ -4,7 +4,7 @@
 
 ---
 
-SQS MEGA is a minimal and resilient framework for async processing, event-streaming and pattern-matching that uses [Amazon Simple Queue Service (SQS)](https://aws.amazon.com/sqs/). It also implements the → [MEGA event protocol](https://github.com/mega-distributed/event-mega). It has the following goals:
+SQS MEGA is a minimal and resilient framework for async processing, event-streaming and pattern-matching that uses [Amazon Simple Queue Service (SQS)](https://aws.amazon.com/sqs/). It also implements the → [**MEGA event protocol**](https://github.com/mega-distributed/event-mega). It has the following goals:
 
 - Simplicity
 - Resiliency
@@ -21,7 +21,7 @@ The framework can replace intricated setups or heavy tools that could be difficu
 
 It is shipping soon for:
 
-- → **[Python](https://github.com/mega-distributed/sqs-mega-python)**
+- → [**Python**](https://github.com/mega-distributed/sqs-mega-python)
 - Node.js
 - Rust
 - Ruby
