@@ -122,40 +122,82 @@ It will be serialized within the SQS message envelope as:
 <Body>{&quot;id&quot;: 543210, &quot;name&quot;: &quot;John Doe&quot;, &quot;ssn&quot;: &quot;453142161&quot;, &quot;date_of_birth&quot;: &quot;1986-12-01&quot;}</Body>
 ```
 
-## The SQS MEGA protocol
+## Message payloads
 
-SQS MEGA requires all SQS messages to contain a valid, properly-escaped, JSON payload within the body envelope. In case the body cannot be correctly deserialized by a JSON parser, the message will be ignored or optionally sent to a dead-queue.
+A message payload can be one of the following:
 
-In order to better support the event-streaming capabilities provided by the framework, the following structure should be followed when publishing events:
+- [MEGA event](https://github.com/mega-distributed/event-mega)
+- Data object
+- Plaintext
+- Binary blob
 
-- `protocol` (_required_, string): should contain the `sqs-mega` string. This is important to differentiate SQS MEGA events from other SQS messages that may arrive at the queue. Messages that do not adhere to the protocol will either be ignored or handled differently.
-- `version` (_required_, integer): specifies the version of the protocol. Here we consciously avoid the unnecessary complexities of [semantic versioning](https://semver.org). The current version is 1, and this number will only increase if backward incompatible changes are introduced.
-- `event.name` (_required_, string): the name of the event, which will be used for subscribers to match. Can be any lower-cased alphanumeric string and can include the following special characters: `.`, `-`, `_`.
-- `event.timestamp` (_required_, datetime): a [ISO-9601](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations) timestamp that indicates when the event happened.
-- `event.version` (_optional_, integer): this is the version of the event. It is highly recommended that your events are versioned, to allow breaking changes to be introduced more easily in the future. However, we also want to avoid the complexities of semantic versioning and only increase the version when backward incompatible changes are needed. Design your event subscribers to be [tolerant readers](https://martinfowler.com/bliki/TolerantReader.html). This will allow your architecture to evolve more easily.
-- `event.publisher` (_optional_, string): any string that can identify the publisher of the event, like the name of a service,  system or domain.
-- `event.subject` (_optional_, string): the subject to which the event refers to. It is usually an entity identifier, like the database primary key. For example, if the event is about an item being added to the user's shopping cart in an e-commerce system, the subject could be the user ID.
-- `data` (_optional_): a JSON object containing any application-specific data.
+**MEGA events**
 
-Example:
+The [MEGA event protocol](https://github.com/mega-distributed/event-mega) aims to be a common protocol for all your event-streaming needs, regardless of platform. SQS MEGA supports MEGA events nativelly.
 
 ```json
 {
-    "protocol": "sqs-mega",
+    "protocol": "mega",
     "version": 1,
     "event": {
-        "name": "shopping_cart.item_added",
-        "timestamp": "2020-05-04T15:53:23.123",
+        "name": "user.updated",
+        "timestamp": "2020-05-04T15:53:27.823",
         "version": 1,
-        "publisher": "shopping-cart-service",
-        "subject": "987650"
+        "domain": "user",
+        "subject": "987650",
+        "username": "john.doe",
+        "attributes": {
+            "email": "johndoe_86@example.com",
+            "ssn": "497279436"
+        }
     },
-    "data": {
-        "item_id": "61fcc874-624e-40f8-8fd7-0e663c7837e8",
-        "item_quantity": 5
+    "object": {
+        "current": {
+            "id": 987650,
+            "full_name": "John Doe",
+            "username": "john.doe",
+            "email": "johndoe_86@example.com",
+            "ssn": "497279436",
+            "birthdate": "1986-02-15",
+            "created_at": "2020-05-03T12:20:23.000",
+            "updated_at": "2020-05-04T15:52:01.000"
+        }
     }
 }
 ```
+
+**Data objects**
+
+SQS MEGA can also publish, consume, and perform pattern-matching on any generic data objects.
+
+```json
+{
+    "type": "user_notification",
+    "notification_type": "email",
+    "user": {
+        "id": 987650,
+        "email": "johndoe_86@example.com"
+    }
+}
+```
+
+### Data serialization
+
+Currently, MEGA events or data objects can only be serialized to and from JSON format. Optionally, [Binary JSON (BSON)](http://bsonspec.org) can be used to compress messages over the network.
+
+In the future, support for other data serialization formats, such as XML, could be added.
+
+#### Raw plaintext and binary blobs
+
+Because SQS messages can only be transmitted over plaintext media, binary content such as BSON or bytes will be automatically encoded by SQS MEGA using [Base64](https://en.wikipedia.org/wiki/Base64).
+
+Any string that cannot be decoded as Base64 or JSON is considered plaintext with Unicode encoding. Similarly, any set of bytes encoded as Base64 that cannot be decoded as BSON will be considered a generic binary blob.
+
+SQS MEGA gives message subscribers the ability to perform pattern-matching, but that only applies to MEGA events and data objects. If a message contains a plaintext payload that cannot be decoded as JSON or a binary payload that cannot be decoded as BSON, the framework allows you to either:
+
+- Provide custom code to consume the plaintext or binary payload
+- Provide custom code to transform the plaintext or binary payload to a data object, which then can have pattern-matching rules applied.
+- Ignore the unrecognized plaintext or binary payload and delete the message from the queue (_default_).
 
 ## Best practices for processing asynchronous messages
 
