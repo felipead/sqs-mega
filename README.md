@@ -11,7 +11,15 @@ SQS MEGA is a minimal and resilient framework for async processing, event-stream
 - Horizontal scalability
 - Interoperability
 
-**Shipping soon**
+SQS MEGA is ideal for event-driven **microservices** or **distributed systems** that need to communicate using the [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) pattern or process background tasks. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to publish and subscribe to events or consume messages in the background using your platform of choice.
+
+SQS MEGA implementations also have an idiomatic and expressive **pattern-matching** DSL that allows developers to subscribe to specific events and filter messages easily.
+
+The framework can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as [Celery](http://www.celeryproject.org), [ActiveMQ](https://activemq.apache.org), [Sidekiq](https://sidekiq.org), [Resque](http://resque.github.io), [delayed_job](https://github.com/collectiveidea/delayed_job/), or even [RabbitMQ](https://www.rabbitmq.com) and [Apache Kafka](https://kafka.apache.org). Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds.
+
+## Implementations
+
+Shipping soon for:
 
 - → [**Python**](https://github.com/mega-distributed/sqs-mega-python)
 - Node.js
@@ -19,19 +27,27 @@ SQS MEGA is a minimal and resilient framework for async processing, event-stream
 - Ruby
 - JVM
 
----
+## Index
 
-[TOC]
-
----
-
-## Introduction
-
-SQS MEGA is ideal for event-driven **microservices** or **distributed systems** that need to communicate using the [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) pattern or process background tasks. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to publish and subscribe to events or consume messages in the background using your platform of choice.
-
-SQS MEGA implementations also have an idiomatic and expressive **pattern-matching** DSL that allows developers to subscribe to specific events and filter messages easily.
-
-The framework can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as [Celery](http://www.celeryproject.org), [ActiveMQ](https://activemq.apache.org), [Sidekiq](https://sidekiq.org), [Resque](http://resque.github.io), [delayed_job](https://github.com/collectiveidea/delayed_job/), or even [RabbitMQ](https://www.rabbitmq.com) and [Apache Kafka](https://kafka.apache.org). Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds.
+- [Background](#background)
+- [Amazon SQS](#amazon-sqs)
+  * [Standard vs. FIFO queues](#standard-vs-fifo-queues)
+  * [Anatomy of a SQS message](#anatomy-of-a-sqs-message)
+- [Message payloads](#message-payloads)
+    + [MEGA events](#mega-events)
+    + [Data objects](#data-objects)
+  * [Data serialization](#data-serialization)
+    + [Raw plaintext and binary blobs](#raw-plaintext-and-binary-blobs)
+- [Best practices for processing asynchronous messages](#best-practices-for-processing-asynchronous-messages)
+  * [Design your application to be idempotent](#design-your-application-to-be-idempotent)
+  * [Be prepared for messages out-of-order](#be-prepared-for-messages-out-of-order)
+  * [Handle concurrency gracefully](#handle-concurrency-gracefully)
+    + [Isolation and locking strategies for relational databases](#isolation-and-locking-strategies-for-relational-databases)
+      - [PostgreSQL](#postgresql)
+      - [MySQL](#mysql)
+      - [MariaDB](#mariadb)
+    + [When a relational database is not available](#when-a-relational-database-is-not-available)
+  * [Retry transient failures](#retry-transient-failures)
 
 ## Background
 
