@@ -131,7 +131,7 @@ A message payload can be one of the following:
 - Plaintext
 - Binary blob
 
-**MEGA events**
+#### MEGA events
 
 The [MEGA event protocol](https://github.com/mega-distributed/event-mega) aims to be a common protocol for all your event-streaming needs, regardless of platform. SQS MEGA supports MEGA events nativelly.
 
@@ -166,7 +166,7 @@ The [MEGA event protocol](https://github.com/mega-distributed/event-mega) aims t
 }
 ```
 
-**Data objects**
+#### Data objects
 
 SQS MEGA can also publish, consume, and perform pattern-matching on any generic data objects.
 
