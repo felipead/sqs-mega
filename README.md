@@ -11,7 +11,7 @@ SQS MEGA is a minimal and resilient framework for async processing, event-stream
 - Horizontal scalability
 - Interoperability
 
-SQS MEGA is ideal for event-driven **microservices** or **distributed systems** that need to communicate using the [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) pattern or process background tasks. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to publish and subscribe to events or consume messages in the background using your platform of choice.
+It is ideal for event-driven **microservices** or **distributed systems** that need to communicate using the [**Publish-Subscribe**](https://en.wikipedia.org/wiki/Publish–subscribe_pattern) pattern or process background tasks. It leverages both the power and resiliency of Amazon SQS, packaged in a way that makes it simple to publish and subscribe to events or consume messages in the background using your platform of choice.
 
 SQS MEGA implementations also have an idiomatic and expressive **pattern-matching** DSL that allows developers to subscribe to specific events and filter messages easily.
 
@@ -27,7 +27,7 @@ Shipping soon for:
 - Ruby
 - JVM
 
-## Index
+## Table of Contents
 
 - [Background](#background)
 - [Amazon SQS](#amazon-sqs)
