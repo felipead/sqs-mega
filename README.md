@@ -17,7 +17,7 @@ SQS MEGA implementations also have an idiomatic and expressive **pattern-matchin
 
 The framework can replace intricated setups or heavy tools that could be difficult to learn or configure correctly, such as [Celery](http://www.celeryproject.org), [ActiveMQ](https://activemq.apache.org), [Sidekiq](https://sidekiq.org), [Resque](http://resque.github.io), [delayed_job](https://github.com/collectiveidea/delayed_job/), or even [RabbitMQ](https://www.rabbitmq.com) and [Apache Kafka](https://kafka.apache.org). Amazon SQS standard queues scale automatically and offer at-least-once delivery assurances, combining the best of both worlds.
 
-#### Implementations
+### Implementations
 
 Shipping soon for:
 
@@ -27,7 +27,7 @@ Shipping soon for:
 - Ruby
 - JVM
 
-#### Features
+### Features
 
 - Publish and consume data payloads and [MEGA events](https://github.com/mega-distributed/event-mega) over [Amazon SQS](https://aws.amazon.com/sqs/) or [Amazon SNS](https://aws.amazon.com/sns/).
 - Subscribe to specific events and messages using an expressive **pattern-matching** DSL.
